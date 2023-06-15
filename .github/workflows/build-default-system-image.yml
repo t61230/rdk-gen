@@ -1,0 +1,24 @@
+name: build default image
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@main
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y build-essential make cmake libpcre3 libpcre3-dev bc bison flex python3-numpy mtd-utils zlib1g-dev debootstrap libdata-hexdumper-perl libncurses5-dev zip qemu-user-static curl repo git liblz4-tool apt-cacher-ng libssl-dev checkpolicy autoconf 
+          curl -fO http://archive.sunrisepi.tech/toolchain/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu.tar.xz
+          sudo tar -xvf gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu.tar.xz -C /opt
+      - name: Set environment variables for cross-compiling toolchains
+        run: |
+          export CROSS_COMPILE=/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/bin/aarch64-linux-gnu-
+          export LD_LIBRARY_PATH=/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+          export PATH=$PATH:/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/bin/
+          export ARCH=arm64
+
+
+        
