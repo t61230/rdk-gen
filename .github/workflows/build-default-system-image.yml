@@ -22,5 +22,4 @@ jobs:
           export ARCH=arm64
       - name: Package system image
         run: |
-          cd rdk-gen
           sudo ./pack_image.sh
