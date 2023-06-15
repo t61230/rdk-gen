@@ -20,6 +20,7 @@ jobs:
           export LD_LIBRARY_PATH=/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
           export PATH=$PATH:/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/bin/
           export ARCH=arm64
-
-
-        
+      - name: Package system image
+        run: |
+          cd rdk-gen
+          sudo ./pack_image.sh
