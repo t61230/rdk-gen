@@ -29,11 +29,11 @@ jobs:
           sudo tar zcvf out/ubuntu-preinstalled-desktop-arm64.tar.xz deploy/ubuntu-preinstalled-desktop-arm64.img
           sudo tar zcvf out/rootfs.tar.xz deploy/rootfs
           sudo chmod 777 out/*
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: rdk-gen-release
-          path: rdk-gen/out 
+      #- name: Upload a Build Artifact
+      #  uses: actions/upload-artifact@v3.1.2
+      #  with:
+      #    name: rdk-gen-release
+      #    path: rdk-gen/out 
       - name: release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
