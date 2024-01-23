@@ -2,7 +2,7 @@ name: Build a development container
 
 # Environment variables available to all jobs and steps in this workflow.
 env:
-  REGISTRY: registry.cn-hangzhou.aliyuncs.com
+  REGISTRY: registry.cn-shanghai.aliyuncs.com
   NAMESPACE: x3_public
   IMAGE: x3_dev_container
   TAG: ${{ github.sha }}
