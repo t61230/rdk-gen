@@ -1,0 +1,60 @@
+name: Build a development container
+
+# Environment variables available to all jobs and steps in this workflow.
+env:
+  REGION_ID: cn-shanghai
+  REGISTRY: registry.cn-shanghai.aliyuncs.com
+  NAMESPACE: x3_public
+  IMAGE: x3_dev_container
+  TAG: ${{ github.sha }}
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 1.1 Login to ACR
+      - name: Login to ACR with the AccessKey pair
+        uses: aliyun/acr-login@v1
+        with:
+          region-id: "${{ env.REGION_ID }}"
+          access-key-id: "${{ secrets.ACCESS_KEY_ID }}"
+          access-key-secret: "${{ secrets.ACCESS_KEY_SECRET }}"
+        
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt-get install -y build-essential docker-compose-v2 make cmake libpcre3 libpcre3-dev bc bison flex python3-numpy mtd-utils zlib1g-dev debootstrap libdata-hexdumper-perl libncurses5-dev zip qemu-user-static curl repo git liblz4-tool apt-cacher-ng libssl-dev checkpolicy autoconf android-sdk-libsparse-utils mtools parted dosfstools udev rsync
+          curl -fO http://sunrise.horizon.cc/toolchain/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu.tar.xz
+          sudo tar -xvf gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu.tar.xz -C /opt
+          
+      - name: Set environment variables for cross-compiling toolchains
+        run: |
+          export CROSS_COMPILE=/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/bin/aarch64-linux-gnu-
+          export LD_LIBRARY_PATH=/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+          export PATH=$PATH:/opt/gcc-ubuntu-9.3.0-2020.03-x86_64-aarch64-linux-gnu/bin/
+          export ARCH=arm64
+          
+      - name: Build the RDK image
+        run: |
+          sudo ./pack_image.sh
+          
+      # 1.2 Buid and push image to ACR
+      - name: Build and push image to ACR
+        run: |
+          sudo chmod 777 deploy/
+          echo 'FROM arm64v8/ubuntu:focal
+          COPY /rootfs /'> deploy/Dockerfile
+          sudo docker build  --platform linux/arm64 --tag "$REGISTRY/$NAMESPACE/$IMAGE:$TAG" deploy
+          sudo docker push "$REGISTRY/$NAMESPACE/$IMAGE:$TAG"
+          
