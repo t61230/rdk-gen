@@ -30,6 +30,7 @@ jobs:
         
         with:
           login-server: https://registry.cn-shanghai.aliyuncs.com
+          region-id: "${{ env.REGION_ID }}"
           username: "${{ secrets.REGISTRY_USERNAME }}"
           password: "${{ secrets.REGISTRY_PASSWORD }}"
         
