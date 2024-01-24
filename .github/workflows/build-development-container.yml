@@ -2,6 +2,7 @@ name: Build a development container
 
 # Environment variables available to all jobs and steps in this workflow.
 env:
+  REGION_ID: cn-shanghai
   REGISTRY: registry.cn-shanghai.aliyuncs.com
   NAMESPACE: x3_public
   IMAGE: x3_dev_container
